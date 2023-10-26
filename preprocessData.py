@@ -4,6 +4,20 @@ import matplotlib.pyplot as plt
 
 def preprocessData(raw_data_path, downsample_to, epoch_size_sec, plot_diagnostic=True):
     
+    # This function performs preprocessing on raw MEG data. 
+    #
+    # raw_data_path:   Path to MEG file
+    # downsample_to:   Target frequency for downsampling. Initial sampling freq
+    #                  is obtained from metadata automatically.
+    # epoch_size_sec:  Epoch size in seconds. 
+    # plot_diagnostic: Plot EEG and MEG channel PSDs before and after 
+    #                  preprocessing
+    #
+    # This function produces epoched_data and saves a new fif file. If you want
+    # to reject some bad epochs, first run epoched_data.plot() and then, select
+    # the sections you want to remove. Once you close the plot, the selected 
+    # sections are removed automatically. 
+    
     # Read raw data
     raw_data = mne.io.read_raw_ctf(raw_data_path, preload=True)
     
