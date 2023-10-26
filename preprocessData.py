@@ -1,11 +1,11 @@
-import mne
+import mne, os
 import numpy as np
 import matplotlib.pyplot as plt
 
-def preprocessData(raw_data, downsample_to, epoch_size_sec, plot_diagnostic=True):
+def preprocessData(raw_data_path, downsample_to, epoch_size_sec, plot_diagnostic=True):
     
     # Read raw data
-    raw_data = mne.io.read_raw_ctf(raw_data, preload=True)
+    raw_data = mne.io.read_raw_ctf(raw_data_path, preload=True)
     
     # We downsample the raw data here, but we won't use this version. It's just 
     # for comparing plots against the preprocessed data at the end.
@@ -37,7 +37,16 @@ def preprocessData(raw_data, downsample_to, epoch_size_sec, plot_diagnostic=True
         raw_downsampled_for_plotting.plot_psd(ax=[axs[0,0], axs[0,1]])
         downsampled_data.plot_psd(ax=[axs[1,0], axs[1,1]])
     
-    return epoched_data
+    # Save processed data as fif
+    if raw_data_path[-1] == '/' or raw_data_path[-1] == '\\':
+        splitted_input_path = os.path.split(raw_data_path[:-1])
+    else:
+        splitted_input_path = os.path.split(raw_data_path)
+    save_path = splitted_input_path[0]
+    new_file_path = os.path.join(save_path, 'preprocessed_' + splitted_input_path[1][:-3] + '-epo.fif')
+    epoched_data.save(new_file_path)
+    
+    return (epoched_data, new_file_path)
     
     
     
