@@ -19,7 +19,7 @@ def preprocessData(raw_data_path, downsample_to, epoch_size_sec, plot_diagnostic
     # sections are removed automatically. 
     
     # Read raw data
-    raw_data = mne.io.read_raw_ctf(raw_data_path, preload=True)
+    raw_data = mne.io.read_raw_fif(raw_data_path, preload=True)
     
     # We downsample the raw data here, but we won't use this version. It's just 
     # for comparing plots against the preprocessed data at the end.
