@@ -75,6 +75,15 @@ def finnpy_sourceReconstruction(meg_data_path, fs_subject_folder, subj_path, sub
     print("Calculating transformation to fs-average")
     (fs_avg_trans_mat, src_fs_avg_valid_lh_vert, src_fs_avg_valid_rh_vert) = get_mri_subj_to_fs_avg_trans_mat(lh_white_valid_vert, rh_white_valid_vert, octa_model_vert, subj_path, fsaverage_path , overwrite=False)
     
+    # Load raw data and convert to source and fsaverage spaces 
+    raw_data = mne.io.read_raw_fif(meg_data_path)
+    sensor_data = raw_data.get_data()
+    sensor_data = sensor_data[0:306, :]
+    source_data = apply_inverse_model(sensor_data, inv_trans, noise_norm)
+    fsaverage_space = apply_mri_subj_to_fs_avg_trans_mat(fs_avg_trans_mat, source_data)
+    
+    return (source_data, fsaverage_space)
+    
     # # Visualize everything 
     # plot_coregistration(rigid_mri_to_head_trans, rec_meta_info, meg_pts, subj_path)
     # plot_skull_and_skin_models(ws_in_skull_vert, ws_in_skull_faces,
