@@ -46,10 +46,8 @@ def preprocessData(raw_data_path, downsample_to, epoch_size_sec, plot_diagnostic
     
     # Plot PSD of raw and preprocessed data to make sure everything worked OK.
     if plot_diagnostic == True:
-        fig, axs = plt.subplots(2,2)
-        fig.suptitle('Raw vs. preprocessed data PSDs')
-        raw_downsampled_for_plotting.plot_psd(ax=[axs[0,0], axs[0,1]])
-        downsampled_data.plot_psd(ax=[axs[1,0], axs[1,1]])
+        raw_downsampled_for_plotting.plot_psd()
+        downsampled_data.plot_psd()
     
     # Save processed data as fif
     if raw_data_path[-1] == '/' or raw_data_path[-1] == '\\':
