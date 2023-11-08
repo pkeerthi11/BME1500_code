@@ -82,7 +82,7 @@ def finnpy_sourceReconstruction(meg_data_path, fs_subject_folder, subj_path, sub
     source_data = apply_inverse_model(sensor_data, inv_trans, noise_norm)
     fsaverage_space = apply_mri_subj_to_fs_avg_trans_mat(fs_avg_trans_mat, source_data)
     
-    return (source_data, fsaverage_space)
+    return (source_data, fsaverage_space, src_fs_avg_valid_lh_vert, src_fs_avg_valid_rh_vert)
     
     # # Visualize everything 
     # plot_coregistration(rigid_mri_to_head_trans, rec_meta_info, meg_pts, subj_path)
