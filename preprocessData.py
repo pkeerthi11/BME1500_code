@@ -9,7 +9,7 @@ def preprocessData(raw_data_path, downsample_to, epoch_size_sec, plot_diagnostic
     # raw_data_path:   Path to MEG file
     # downsample_to:   Target frequency for downsampling. Initial sampling freq
     #                  is obtained from metadata automatically.
-    # epoch_size_sec:  Epoch size in seconds. 
+    # epoch_size_sec:  Epoch size in seconds. If set to 0, do not epoch
     # plot_diagnostic: Plot EEG and MEG channel PSDs before and after 
     #                  preprocessing
     #
@@ -41,8 +41,11 @@ def preprocessData(raw_data_path, downsample_to, epoch_size_sec, plot_diagnostic
     downsampled_data = notched_data.copy().resample(downsample_to)
     
     # Epoch downsampled and filtered data with the specified epoch sizes
-    epoched_data = mne.make_fixed_length_epochs(downsampled_data, 
-                                                epoch_size_sec)
+    if epoch_size_sec != 0:
+        preprocessed_data = mne.make_fixed_length_epochs(downsampled_data, 
+                                                    epoch_size_sec)
+    else:   
+        preprocessed_data = downsampled_data
     
     # Plot PSD of raw and preprocessed data to make sure everything worked OK.
     if plot_diagnostic == True:
@@ -55,10 +58,13 @@ def preprocessData(raw_data_path, downsample_to, epoch_size_sec, plot_diagnostic
     else:
         splitted_input_path = os.path.split(raw_data_path)
     save_path = splitted_input_path[0]
-    new_file_path = os.path.join(save_path, 'preprocessed_' + splitted_input_path[1][:-3] + '-epo.fif')
-    epoched_data.save(new_file_path,overwrite=True)
+    if epoch_size_sec != 0:
+        new_file_path = os.path.join(save_path, 'preprocessed_' + splitted_input_path[1][:-3] + '-epo.fif')
+    else:
+        new_file_path = os.path.join(save_path, 'preprocessed_' + splitted_input_path[1][:-3] + '-raw.fif')
+    preprocessed_data.save(new_file_path,overwrite=True)
     
-    return (epoched_data, new_file_path)
+    return (preprocessed_data, new_file_path)
     
     
     
