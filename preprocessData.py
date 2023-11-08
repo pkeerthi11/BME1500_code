@@ -64,7 +64,7 @@ def preprocessData(raw_data_path, downsample_to, epoch_size_sec, plot_diagnostic
         new_file_path = os.path.join(save_path, 'preprocessed_' + splitted_input_path[1][:-3] + '-raw.fif')
     preprocessed_data.save(new_file_path,overwrite=True)
     
-    return (preprocessed_data, new_file_path)
+    return preprocessed_data
     
     
     
