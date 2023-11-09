@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import mne, os
 
-def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readings, subjects_dir, subject):
+def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readings, subjects_dir, subject, n_jobs):
 
 ########################## Setup paths ########################################
 
@@ -34,7 +34,7 @@ def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readin
     
     fig = mne.viz.plot_bem(**plot_bem_kwargs)
     fig.savefig(os.path.join(plots_folder, 'watershed_results.png'))
-
+    plt.close('all')
 ######################### Registration ########################################
 
     # Make scalp surfaces for visualization and registration 
@@ -52,7 +52,6 @@ def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readin
         show_axes=True,
         coord_frame="meg"
     )
-    view_kwargs = dict(azimuth=45, elevation=90, distance=0.6, focalpoint=(0.0, 0.0, 0.0))
 
     # Initial fit
     coreg.fit_fiducials(verbose=True)
@@ -65,13 +64,13 @@ def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readin
     
     # Plot 
     fig = mne.viz.plot_alignment(preprocessed_epoched_data.info, trans=coreg.trans, **plot_kwargs)
-    mne.viz.set_3d_view(fig, **view_kwargs)
     screenshot = fig.plotter.screenshot()
     fig, ax = plt.subplots(figsize=(10, 10))
     ax.imshow(screenshot, origin='upper')
     ax.set_axis_off()  # Disable axis labels and ticks
     fig.tight_layout()
     fig.savefig(os.path.join(plots_folder, 'sensor_registration_results.png'), dpi=150)
+    plt.close('all')
     
     dists = coreg.compute_dig_mri_distances() * 1e3  # in mm
     print(
@@ -85,7 +84,7 @@ def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readin
 
 ########################## Source Space ######################################
 
-    src = mne.setup_source_space(subject, spacing="oct6", n_jobs=-1, subjects_dir=subjects_dir)
+    src = mne.setup_source_space(subject, spacing="oct6", n_jobs=n_jobs, subjects_dir=subjects_dir)
     print(src)
     fig = mne.viz.plot_alignment(
         subject=subject,
@@ -94,13 +93,21 @@ def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readin
         coord_frame="mri",
         src=src
     )
+    mne.viz.set_3d_view(
+    fig,
+    azimuth=173.78,
+    elevation=101.75,
+    distance=0.30,
+    focalpoint=(-0.03, -0.01, 0.03),
+    )   
     screenshot = fig.plotter.screenshot()
     fig, ax = plt.subplots(figsize=(10, 10))
     ax.imshow(screenshot, origin='upper')
     ax.set_axis_off()  # Disable axis labels and ticks
     fig.tight_layout()
     fig.savefig(os.path.join(plots_folder, 'source_space.png'), dpi=150)    
-
+    plt.close('all')
+    
 ########################## Forward model #####################################
     
     # BEM solution
@@ -121,11 +128,11 @@ def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readin
         meg=True,
         eeg=False,
         mindist=5.0,
-        n_jobs=-1,
+        n_jobs=n_jobs,
         verbose=True,
     )
     print(fwd)
-    mne.write_forward_solution(os.path.join(intermediate_folder, '%s-fwd.fif' % subject), bem)
+    mne.write_forward_solution(os.path.join(intermediate_folder, '%s-fwd.fif' % subject), fwd)
 
 ############################ Noise Covariance #################################
 
@@ -133,6 +140,7 @@ def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readin
     fig_cov, fig_spectra = mne.viz.plot_cov(noise_cov, preprocessed_epoched_data.info, show=False)
     fig_cov.savefig(os.path.join(plots_folder, 'noise_cov.png'))
     fig_spectra.savefig(os.path.join(plots_folder, 'noise_spec.png'))
+    plt.close('all')
     
 ########################### Inverse Model #####################################
 
@@ -143,7 +151,7 @@ def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readin
     
     mne.minimum_norm.write_inverse_operator(os.path.join(intermediate_folder, '%s-inv.fif' % subject), inverse_operator)
 
-    # Apply inverse - dSPM
+    # Apply inverse - dSPM to epoched data
     method = "dSPM"
     snr = 3.0
     lambda2 = 1.0 / snr**2
@@ -154,12 +162,22 @@ def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readin
                                                  pick_ori=None,
                                                  verbose=True)
 
+    # Compute source PSD on epochs
+    fmin, fmax = 0.0, 70.0 # Freqs 
+    bandwidth = 4.0  # bandwidth of the windows in Hz
+    stcs_psd = mne.minimum_norm.compute_source_psd_epochs(preprocessed_epoched_data, 
+                                                          inverse_operator, lambda2=lambda2,
+                                                          n_jobs=n_jobs, fmin=fmin, fmax=fmax,
+                                                          bandwidth=bandwidth, verbose=True)
+    
     # Calculate morph to fsaverage with the first epoch and then warp all epoches 
     # with this calculation.
     morph = mne.compute_source_morph(stcs[0], subject_from=subject, subject_to='fsaverage')  
     fsaverage_stcs = []
+    fsaverage_stcs_psd = []
     for i in range(len(stcs)):
         print('Applying fsaverage transformation to epoch number: %s' % i)
         fsaverage_stcs.append(morph.apply(stcs[i]))
+        fsaverage_stcs_psd.append(morph.apply(stcs_psd[i]))
         
-    return (stcs, fsaverage_stcs)
+    return (stcs, stcs_psd, fsaverage_stcs, fsaverage_stcs_psd)
