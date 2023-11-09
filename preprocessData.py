@@ -70,7 +70,7 @@ def preprocessData(raw_data_path, downsample_to, epoch_size_sec, subjects_dir, s
         epoched_data.load_data()
         
     else:   
-        epoched_data = downsampled_data
+        epoched_data = downsampled_data.copy()
     
     # Plot PSD of raw and preprocessed data to make sure everything worked OK.
     if subject != 'NA':
@@ -112,7 +112,7 @@ def preprocessData(raw_data_path, downsample_to, epoch_size_sec, subjects_dir, s
         fig = ar.get_reject_log(epoched_data).plot()
         fig.savefig(os.path.join(preprocessed_plots, 'autoreject_log.png'))
     else:
-        preprocessed_data = epoched_data
+        preprocessed_data = epoched_data.copy()
     
     # Save processed data as fif
     if raw_data_path[-1] == '/' or raw_data_path[-1] == '\\':
