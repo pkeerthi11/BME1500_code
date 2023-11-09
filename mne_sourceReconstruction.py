@@ -4,7 +4,29 @@ import matplotlib.pyplot as plt
 import numpy as np
 import mne, os
 
-def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readings, subjects_dir, subject, n_jobs):
+def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readings, subjects_dir, subject, n_jobs, method="dSPM"):
+
+    # This function performs source reconstruction on preprocessed data using
+    # MNE tools.
+    #
+    # preprocessed_epoched_data : Input preprocessed data. Needs to be epoched.
+    # preprocessed_room_readings: Empty room readings for noise covariance.
+    #                             Has to be subjected to same preprocessing as 
+    #                             the experimental data. 
+    # subjects_dir              : Freesurfer subjects dir
+    # subject                   : Name of the subject in freesurfer subjects
+    # n_jobs                    : Number of cores to use. -1 uses all cores.
+    # method                    : Method for source construction. dSPM is 
+    #                             default. Other options are MNE, sLORETA, and
+    #                             eLORETA.
+    #
+    # This function produces epoched sources, epoched source PSDs, and their 
+    # fsaverage realigned versions. It creates two folders in your freesurfer
+    # subject directory. "plots" contain all diagnostic plots, and 
+    # "sourceRecIntermediateFiles" contain all intermediate files produced by
+    # this function. To prevent incomplete runs, nothing overwrites. So delete
+    # these folders if you want to rerun the analysis on the same subject. 
+    #
 
 ########################## Setup paths ########################################
 
@@ -152,7 +174,6 @@ def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readin
     mne.minimum_norm.write_inverse_operator(os.path.join(intermediate_folder, '%s-inv.fif' % subject), inverse_operator)
 
     # Apply inverse - dSPM to epoched data
-    method = "dSPM"
     snr = 3.0
     lambda2 = 1.0 / snr**2
     stcs = mne.minimum_norm.apply_inverse_epochs(preprocessed_epoched_data,

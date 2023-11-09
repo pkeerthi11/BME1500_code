@@ -23,10 +23,10 @@ def preprocessData(raw_data_path, downsample_to, epoch_size_sec, subjects_dir, s
     # auto_reject   :  Run autorejection algorithm to fix epochs. Only works if
     #                  epoch_size_sec is not 0.
     #
-    # This function produces epoched_data and saves a new fif file. If you want
-    # to reject some bad epochs, first run epoched_data.plot() and then, select
-    # the sections you want to remove. Once you close the plot, the selected 
-    # sections are removed automatically. 
+    # This function produces preprocessed_data and saves a new fif file.
+    # To reject some bad epochs manually, first run epoched_data.plot() and
+    # then select the sections you want to remove. Once you close the plot, 
+    # the selected sections are removed automatically. 
     
     # Create the plot folder if it doesn't exist
     if subjects_dir != 'NA' or subject != 'NA':
