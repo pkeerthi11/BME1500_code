@@ -1,4 +1,5 @@
 import mne 
+import numpy as np
 
 def averageSourcesInLabel(subjects_dir, subject, stcs, stcs_psd):
     
@@ -17,8 +18,13 @@ def averageSourcesInLabel(subjects_dir, subject, stcs, stcs_psd):
     for i in labels:
         label_epochs[i.name] = []
         label_epochs_psd[i.name] = []
-        for stc, stc_psd in zip(stcs,stcs_psd):
-            label_epochs[i.name].append(stc.in_label(i))
-            label_epochs_psd[i.name].append(stc_psd.in_label(i))
+        for stc, psd in zip(stcs,stcs_psd):
+            label_epochs[i.name].append(np.mean(stc.in_label(i).data, axis=0))
+            label_epochs_psd[i.name].append(np.mean(psd.in_label(i).data, axis=0))
 
-    return (label_epochs,label_epochs_psd)
+    # Get the times on the x axis of the stcs and frequencies of the PSDs. 
+    # Note that both of these are stored in the same variable (times) in MNE.
+    times = stcs[0].times
+    frequencies = stcs_psd[0].times
+
+    return (label_epochs, times, label_epochs_psd, frequencies)
