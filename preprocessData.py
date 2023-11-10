@@ -41,6 +41,10 @@ def preprocessData(raw_data_path, downsample_to, epoch_size_sec, subjects_dir, s
     # Read raw data
     raw_data = mne.io.read_raw_fif(raw_data_path, preload=True)
     
+    # Just get the MEG channels 
+    picks = mne.pick_types(raw_data.info, meg=True)
+    raw_data = raw_data.pick(picks)
+    
     # We downsample the raw data here, but we won't use this version. It's just 
     # for plotting at the end.
     raw_downsampled_for_plotting = raw_data.copy().resample(downsample_to)
