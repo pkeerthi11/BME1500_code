@@ -1,5 +1,6 @@
 from preprocessData import preprocessData
 from mne_sourceReconstruction import mne_sourceReconstruction
+from averageSourcesInLabel import averageSourcesInLabel
 import mne
 
 # path to data
@@ -17,4 +18,5 @@ preprocessed_data = preprocessData(data, 250, 3, subjects_dir, subject, -1, True
 room_readings = preprocessData(data, 250, 0, 'NA', 'NA', -1, False)
 
 (stcs, stcs_psd, fsaverage_stcs, fsaverage_stcs_psd) = mne_sourceReconstruction(preprocessed_data, room_readings, subjects_dir, subject, n_jobs)
- 
+
+(label_epochs, times, label_epochs_psd, frequencies) = averageSourcesInLabel(subjects_dir, 'fsaverage', fsaverage_stcs, fsaverage_stcs_psd)
