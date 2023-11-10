@@ -20,3 +20,5 @@ def averageSourcesInLabel(subjects_dir, subject, stcs, stcs_psd):
         for stc, stc_psd in zip(stcs,stcs_psd):
             label_epochs[i.name].append(stc.in_label(i))
             label_epochs_psd[i.name].append(stc_psd.in_label(i))
+
+    return (label_epochs,label_epochs_psd)
