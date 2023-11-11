@@ -61,6 +61,7 @@ def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readin
     fig = mne.viz.plot_bem(**plot_bem_kwargs)
     fig.savefig(os.path.join(plots_folder, 'watershed_results.png'))
     plt.close('all')
+    
 ######################### Registration ########################################
 
     # Make scalp surfaces for visualization and registration 
@@ -194,6 +195,8 @@ def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readin
                                                           inverse_operator, lambda2=lambda2,
                                                           n_jobs=n_jobs, fmin=fmin, fmax=fmax,
                                                           bandwidth=bandwidth, verbose=True)
+
+############################# Morph to fsaverage ##############################
     
     # Calculate morph to fsaverage with the first epoch and then warp all epoches 
     # with this calculation. If the subject didn't have T1, we use a bit of a
