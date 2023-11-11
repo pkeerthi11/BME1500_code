@@ -7,19 +7,22 @@ from mne_sourceReconstruction import mne_sourceReconstruction
 from averageSourcesInLabel import averageSourcesInLabel
 from finnpy.source_reconstruction.mri_anatomy import copy_fs_avg_anatomy
 
-# path to the data
+######################## Set paths and variables ##############################
+
+# Path to the sample data folder provided by MNE
 sample_data_folder = mne.datasets.sample.data_path()
 data = (sample_data_folder / 'MEG' / 'sample' / 'sample_audvis_raw.fif')
 room_noise = (sample_data_folder / 'MEG' / 'sample' / 'ernoise_raw.fif')
 
-# Subject paths
+# Specify subject paths.
 subjects_dir = (sample_data_folder / 'subjects')
 
-# If this is set, copy fsaverage. This is to test the no-T1 MRI case.
+# If this is set False, copy fsaverage. This is to test the no-T1 MRI case.
 hasT1 = True 
 
 # Get a copy of the sample data folder for this demo so we don't mess with MNE
-# sample data. If the copy folder exists, delete it first
+# sample data. If the sample_copy folder already exists from an earlier run, 
+# delete it first.
 if os.path.exists(os.path.join(subjects_dir, 'sample_copy')):
     os.system('rm -r %s' % os.path.join(subjects_dir, 'sample_copy'))
 # Copy fsaverage for noT1 case or copy sample subject for the standard case. 
@@ -30,23 +33,13 @@ else:
     sample_copy = os.path.join(subjects_dir, 'sample_copy')
     os.system('cp -r %s %s' % (sample_folder, sample_copy))
 
-# Subject name
+# Set subject name to sample_copy
 subject = 'sample_copy'
-
-# Our functions do not overwrite anything. So we clear some of the folders and 
-# files this script creates so that it can be run again without manual cleaning
-if os.path.exists(os.path.join(subjects_dir, subject, 'plots')):
-    os.system('rm -r %s' % os.path.join(subjects_dir, subject, 'plots'))
-
-if os.path.exists(os.path.join(subjects_dir, subject, 'sourceRecIntermediateFiles')):
-    os.system('rm -r %s' % os.path.join(subjects_dir, subject, 'sourceRecIntermediateFiles'))    
-
-for i in os.listdir(os.path.join(subjects_dir, subject, 'bem')):
-    if i != 'sample-fiducials.fif':
-        os.system('rm %s' % os.path.join(subjects_dir, subject, 'bem', i))
     
-# Core values. -1 uses all. 
+# Number of cores to use. -1 uses all. 
 n_jobs=4
+
+######################### Run analysis functions ##############################
 
 # Preprocess the experiment data and empty room measurements
 preprocessed_data = preprocessData(data, 250, 3, subjects_dir, subject, -1, True)
