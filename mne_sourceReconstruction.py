@@ -198,10 +198,12 @@ def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readin
     # Calculate morph to fsaverage with the first epoch and then warp all epoches 
     # with this calculation. If the subject didn't have T1, we use a bit of a
     # hacky solution by warping fsaverage to fsavarage to have same amount of 
-    # vertices across subjects at the end. 
+    # vertices across subjects at the end by subjecting an interpolation. 
     if hasT1 == True:
         morph = mne.compute_source_morph(stcs[0], subject_from=subject, subject_to='fsaverage')  
     else:
+        # Here we set source subject to fsaverage and morph fsaverage to itself
+        # just to do the interpolation.
         for ver in stcs:
             ver.subject = 'fsaverage'
         for ver in stcs_psd:
