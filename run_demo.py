@@ -1,22 +1,48 @@
+# To run this script you need the following packages: mne, autoreject, nibabel,
+# pyvistaqt. All can be installed with pip. 
+
+import os, mne
 from preprocessData import preprocessData
 from mne_sourceReconstruction import mne_sourceReconstruction
 from averageSourcesInLabel import averageSourcesInLabel
-import mne
 
-# path to data
-data = '/Users/ozenctaskin/MNE_DATA/MNE-sample-data/MEG/sample/sample_audvis_raw.fif'
-room_noise = '/Users/ozenctaskin/MNE_DATA/MNE-sample-data/MEG/sample/ernoise_raw.fif'
+# path to the data
+sample_data_folder = mne.datasets.sample.data_path()
+data = (sample_data_folder / 'MEG' / 'sample' / 'sample_audvis_raw.fif')
+room_noise = (sample_data_folder / 'MEG' / 'sample' / 'ernoise_raw.fif')
 
 # Subject paths
-subjects_dir = '/Applications/freesurfer/7.4.1/subjects/'
-subject = "sample"
+subjects_dir = (sample_data_folder / 'subjects')
 
-# Run values 
+# Get a copy of the sample data folder for this demo
+sample_folder = os.path.join(subjects_dir, 'sample')
+sample_copy = os.path.join(subjects_dir, 'sample_copy')
+os.system('cp -r %s %s' % (sample_folder, sample_copy))
+
+# Subject name
+subject = 'sample_copy'
+
+# Our functions do not overwrite anything. So we clear some of the folders and 
+# files this script creates so that it can be run again without manual cleaning
+if os.path.exists(os.path.join(subjects_dir, subject, 'plots')):
+    os.system('rm -r %s' % os.path.join(subjects_dir, subject, 'plots'))
+
+if os.path.exists(os.path.join(subjects_dir, subject, 'sourceRecIntermediateFiles')):
+    os.system('rm -r %s' % os.path.join(subjects_dir, subject, 'sourceRecIntermediateFiles'))    
+
+for i in os.listdir(os.path.join(subjects_dir, subject, 'bem')):
+    if i != 'sample-fiducials.fif':
+        os.system('rm %s' % os.path.join(subjects_dir, subject, 'bem', i))
+    
+# Core values. -1 uses all. 
 n_jobs=4
 
+# Preprocess the experiment data and empty room measurements
 preprocessed_data = preprocessData(data, 250, 3, subjects_dir, subject, -1, True)
 room_readings = preprocessData(data, 250, 0, 'NA', 'NA', -1, False)
 
+# Run source reconstruction
 (stcs, stcs_psd, fsaverage_stcs, fsaverage_stcs_psd) = mne_sourceReconstruction(preprocessed_data, room_readings, subjects_dir, subject, n_jobs)
 
+# Run label averaging on fsaverage space. We use the aparc label
 (label_epochs, times, label_epochs_psd, frequencies) = averageSourcesInLabel(subjects_dir, 'fsaverage', fsaverage_stcs, fsaverage_stcs_psd)
