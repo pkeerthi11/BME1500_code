@@ -46,12 +46,11 @@ def preprocessData(raw_data_path, downsample_to, epoch_size_sec, subjects_dir, s
     raw_data = raw_data.pick(picks)
     
     # We downsample the raw data here, but we won't use this version. It's just 
-    # for plotting at the end.
+    # for plotting and comparing raw vs. processed at the end.
     raw_downsampled_for_plotting = raw_data.copy().resample(downsample_to)
     
-    # Low pass filter data and get rid of frequencies above 250Hz. We don't do
-    # a high-pass to remove drifts. We detrend at the epoching level instead.
-    bandpassed_data = raw_data.copy().filter(None, 250, 
+    # Bandpass filter data and get rid of frequencies outside 1-250Hz.
+    bandpassed_data = raw_data.copy().filter(1, 250, 
                                              phase='zero-double')
 
     # Notch filtering for the band pass filtered data. This time we get rid of 
@@ -67,12 +66,7 @@ def preprocessData(raw_data_path, downsample_to, epoch_size_sec, subjects_dir, s
     if epoch_size_sec != 0:
         epoched_data = mne.make_fixed_length_epochs(downsampled_data.copy(), 
                                                     epoch_size_sec,
-                                                    preload=False)
-        
-        # Detrend the epochs to get rid of drifts.
-        epoched_data.detrend=0;
-        epoched_data.load_data()
-        
+                                                    preload=True)    
     else:   
         epoched_data = downsampled_data.copy()
     
@@ -93,7 +87,7 @@ def preprocessData(raw_data_path, downsample_to, epoch_size_sec, subjects_dir, s
         ar.fit(epoched_data)
         preprocessed_data, reject_log = ar.transform(epoched_data, return_log=True)
         
-        # Plot cleaning results
+        # Plot some cleaning diagnostics
         fig, axes = plt.subplots(2, 1, figsize=(6, 6))
         
         for ax in axes:
