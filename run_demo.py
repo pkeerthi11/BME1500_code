@@ -24,7 +24,7 @@ if os.path.exists(os.path.join(subjects_dir, 'sample_copy')):
     os.system('rm -r %s' % os.path.join(subjects_dir, 'sample_copy'))
 # Copy fsaverage for noT1 case or copy sample subject for the standard case. 
 if hasT1 == False:
-    copy_fs_avg_anatomy(subjects_dir, 'sample_copy', 'sample_copy')
+    copy_fs_avg_anatomy(str(subjects_dir) + '/', 'sample_copy', 'sample_copy')
 else:      
     sample_folder = os.path.join(subjects_dir, 'sample')
     sample_copy = os.path.join(subjects_dir, 'sample_copy')
