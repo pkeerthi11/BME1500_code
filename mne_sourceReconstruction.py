@@ -191,14 +191,15 @@ def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readin
                                                           n_jobs=n_jobs, fmin=fmin, fmax=fmax,
                                                           bandwidth=bandwidth, verbose=True)
     
-    # Calculate morph to fsaverage with the first epoch and then warp all epoches 
-    # with this calculation.
-    morph = mne.compute_source_morph(stcs[0], subject_from=subject, subject_to='fsaverage')  
-    fsaverage_stcs = []
-    fsaverage_stcs_psd = []
-    for i in range(len(stcs)):
-        print('Applying fsaverage transformation to epoch number: %s' % i)
-        fsaverage_stcs.append(morph.apply(stcs[i]))
-        fsaverage_stcs_psd.append(morph.apply(stcs_psd[i]))
-        
+    # # Calculate morph to fsaverage with the first epoch and then warp all epoches 
+    # # with this calculation.
+    # morph = mne.compute_source_morph(stcs[0], subject_from=subject, subject_to='fsaverage')  
+    # fsaverage_stcs = []
+    # fsaverage_stcs_psd = []
+    # for i in range(len(stcs)):
+    #     print('Applying fsaverage transformation to epoch number: %s' % i)
+    #     fsaverage_stcs.append(morph.apply(stcs[i]))
+    #     fsaverage_stcs_psd.append(morph.apply(stcs_psd[i]))
+    fsaverage_stcs = stcs
+    fsaverage_stcs_psd = stcs_psd
     return (stcs, stcs_psd, fsaverage_stcs, fsaverage_stcs_psd)
