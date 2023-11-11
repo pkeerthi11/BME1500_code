@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import mne, os
 
-def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readings, subjects_dir, subject, n_jobs, method="dSPM"):
+def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readings, subjects_dir, subject, n_jobs, method="dSPM", hasT1=True):
 
     # This function performs source reconstruction on preprocessed data using
     # MNE tools.
@@ -19,6 +19,10 @@ def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readin
     # method                    : Method for source construction. dSPM is 
     #                             default. Other options are MNE, sLORETA, and
     #                             eLORETA.
+    # hasT1                     : Whether subject has T1 or uses fsaverage. If
+    #                             the latter skip the fsaverage morph. The 
+    #                             output stcs and fsaverage_stcs will be the 
+    #                             same in this case. 
     #
     # This function produces epoched sources, epoched source PSDs, and their 
     # fsaverage realigned versions. It creates two folders in your freesurfer
@@ -191,15 +195,23 @@ def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readin
                                                           n_jobs=n_jobs, fmin=fmin, fmax=fmax,
                                                           bandwidth=bandwidth, verbose=True)
     
-    # # Calculate morph to fsaverage with the first epoch and then warp all epoches 
-    # # with this calculation.
-    # morph = mne.compute_source_morph(stcs[0], subject_from=subject, subject_to='fsaverage')  
-    # fsaverage_stcs = []
-    # fsaverage_stcs_psd = []
-    # for i in range(len(stcs)):
-    #     print('Applying fsaverage transformation to epoch number: %s' % i)
-    #     fsaverage_stcs.append(morph.apply(stcs[i]))
-    #     fsaverage_stcs_psd.append(morph.apply(stcs_psd[i]))
-    fsaverage_stcs = stcs
-    fsaverage_stcs_psd = stcs_psd
+    # Calculate morph to fsaverage with the first epoch and then warp all epoches 
+    # with this calculation. If the subject didn't have T1, we use a bit of a
+    # hacky solution by warping fsaverage to fsavarage to have same amount of 
+    # vertices across subjects at the end. 
+    if hasT1 == True:
+        morph = mne.compute_source_morph(stcs[0], subject_from=subject, subject_to='fsaverage')  
+    else:
+        for ver in stcs:
+            ver.subject = 'fsaverage'
+        for ver in stcs_psd:
+            ver.subject = 'fsaverage'
+        morph = mne.compute_source_morph(stcs[0], subject_from='fsaverage', subject_to='fsaverage') 
+    fsaverage_stcs = []
+    fsaverage_stcs_psd = []
+    for i in range(len(stcs)):
+        print('Applying fsaverage transformation to epoch number: %s' % i)
+        fsaverage_stcs.append(morph.apply(stcs[i]))
+        fsaverage_stcs_psd.append(morph.apply(stcs_psd[i])) 
+        
     return (stcs, stcs_psd, fsaverage_stcs, fsaverage_stcs_psd)
