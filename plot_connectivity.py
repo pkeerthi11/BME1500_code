@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import mne, mne_connectivity
+import mne, mne_connectivity, os
 
 def plot_connectivity(con_mat, labels, con_methods, subjects_dir, subject, save_fig=True):    
 
