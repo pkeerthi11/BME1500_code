@@ -6,6 +6,9 @@ from preprocessData import preprocessData
 from mne_sourceReconstruction import mne_sourceReconstruction
 from averageSourcesInLabel import averageSourcesInLabel
 from finnpy.source_reconstruction.mri_anatomy import copy_fs_avg_anatomy
+from calculate_connectivity import calculate_connectivity
+from plot_connectivity import plot_connectivity
+from morph_to_fsaverage import morph_to_fsaverage
 
 ######################## Set paths and variables ##############################
 
@@ -42,11 +45,25 @@ n_jobs=4
 ######################### Run analysis functions ##############################
 
 # Preprocess the experiment data and empty room measurements
-preprocessed_data = preprocessData(data, 250, 3, subjects_dir, subject, -1, True)
-room_readings = preprocessData(data, 250, 0, 'NA', 'NA', -1, False)
+preprocessed_data = preprocessData(str(data), 250, 3, str(subjects_dir), subject, -1, True)
+room_readings = preprocessData(str(data), 250, 0, 'NA', 'NA', -1, False)
 
 # Run source reconstruction
-(stcs, stcs_psd, fsaverage_stcs, fsaverage_stcs_psd) = mne_sourceReconstruction(preprocessed_data, room_readings, subjects_dir, subject, n_jobs, hasT1=hasT1)
+(stcs, stcs_psd, inverse_operator) = mne_sourceReconstruction(preprocessed_data, room_readings, str(subjects_dir), subject, n_jobs, hasT1=hasT1)
+
+# Connectivity
+(con_mat_theta, con_mat_alpha, con_mat_beta, con_mat_gamma, labels) = calculate_connectivity(preprocessed_data, stcs, str(subjects_dir), subject, inverse_operator, con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv'], n_jobs=n_jobs)
+
+# Plot connectivity
+con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv']
+plot_connectivity(con_mat_theta, labels, con_methods, str(subjects_dir), subject, save_fig=True)
+plot_connectivity(con_mat_alpha, labels, con_methods, str(subjects_dir), subject, save_fig=True)
+plot_connectivity(con_mat_beta, labels, con_methods, str(subjects_dir), subject, save_fig=True)
+plot_connectivity(con_mat_gamma, labels, con_methods, str(subjects_dir), subject, save_fig=True)
+
+# Morph to fsaverage space 
+fsaverage_stcs = morph_to_fsaverage(stcs, hasT1, str(subjects_dir), subject)
+fsaverage_stcs_psd = morph_to_fsaverage(stcs_psd, hasT1, str(subjects_dir), subject)
 
 # Run label averaging on fsaverage space. We use the aparc label
-(label_epochs, times, label_epochs_psd, frequencies) = averageSourcesInLabel(subjects_dir, 'fsaverage', fsaverage_stcs, fsaverage_stcs_psd)
+(label_epochs, times, label_epochs_psd, frequencies) = averageSourcesInLabel(str(subjects_dir), 'fsaverage', fsaverage_stcs, fsaverage_stcs_psd)
