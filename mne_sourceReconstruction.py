@@ -203,7 +203,7 @@ def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readin
     # hacky solution by warping fsaverage to fsavarage to have same amount of 
     # vertices across subjects at the end by subjecting an interpolation. 
     if hasT1 == True:
-        morph = mne.compute_source_morph(stcs[0], subject_from=subject, subject_to='fsaverage')  
+        morph = mne.compute_source_morph(stcs[0], subject_from=subject, subject_to='fsaverage', subjects_dir=subjects_dir)  
     else:
         # Here we set source subject to fsaverage and morph fsaverage to itself
         # just to do the interpolation.
@@ -211,7 +211,7 @@ def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readin
             ver.subject = 'fsaverage'
         for ver in stcs_psd:
             ver.subject = 'fsaverage'
-        morph = mne.compute_source_morph(stcs[0], subject_from='fsaverage', subject_to='fsaverage') 
+        morph = mne.compute_source_morph(stcs[0], subject_from='fsaverage', subject_to='fsaverage', subjects_dir=subjects_dir) 
     fsaverage_stcs = []
     fsaverage_stcs_psd = []
     for i in range(len(stcs)):
@@ -219,4 +219,4 @@ def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readin
         fsaverage_stcs.append(morph.apply(stcs[i]))
         fsaverage_stcs_psd.append(morph.apply(stcs_psd[i])) 
         
-    return (stcs, stcs_psd, fsaverage_stcs, fsaverage_stcs_psd)
+    return (stcs, stcs_psd, fsaverage_stcs, fsaverage_stcs_psd, inverse_operator)
