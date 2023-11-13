@@ -1,4 +1,5 @@
 import mne, mne_connectivity, os
+import numpy as np
 
 def calculate_connectivity(preprocessed_data, stcs, subjects_dir, subject, inverse_operator, con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv'], n_jobs=-1):
     
