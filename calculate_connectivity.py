@@ -1,7 +1,7 @@
 import mne, mne_connectivity, os
 import numpy as np
 
-def calculate_connectivity(preprocessed_data, stcs, subjects_dir, subject, inverse_operator, data_folder, con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv'], n_jobs=-1):
+def calculate_connectivity(preprocessed_data, stcs, src, subjects_dir, subject, inverse_operator, data_folder, con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv'], n_jobs=-1):
     
     # Get a connectivity results folder in subject dir
     results_folder = os.path.join(data_folder, 'connectivity_results')
@@ -12,9 +12,14 @@ def calculate_connectivity(preprocessed_data, stcs, subjects_dir, subject, inver
     labels = mne.read_labels_from_annot(subject, parc='aparc',
                                         subjects_dir=subjects_dir)
     
+    # If subject is fsaverage, remove the last label as it is unknown
+    if subject == 'fsaverage':
+        labels = labels[:-1]
+    
     # Average the source estimates within each label using sign-flips to reduce
     # signal cancellations, also here we return a generator
-    src = inverse_operator['src']
+    if isinstance(src,str) == True:
+        src = mne.read_source_spaces(src)
     label_ts = mne.extract_label_time_course(stcs, labels, src, 
                                              mode='mean_flip', return_generator=True)
 
