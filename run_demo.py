@@ -3,7 +3,7 @@
 
 import os, mne
 from preprocess_data import preprocess_data
-from mne_sourceReconstruction import mne_sourceReconstruction
+from mne_source_reconstruction import mne_source_reconstruction
 from average_sources_in_label import average_sources_in_label
 from finnpy.source_reconstruction.mri_anatomy import copy_fs_avg_anatomy
 from calculate_connectivity import calculate_connectivity
@@ -49,7 +49,7 @@ preprocessed_data = preprocess_data(str(data), 250, 3, str(subjects_dir), subjec
 room_readings = preprocess_data(str(data), 250, 0, 'NA', 'NA', -1, False)
 
 # Run source reconstruction
-(stcs, stcs_psd, inverse_operator) = mne_sourceReconstruction(preprocessed_data, room_readings, str(subjects_dir), subject, n_jobs, hasT1=hasT1)
+(stcs, stcs_psd, inverse_operator) = mne_source_reconstruction(preprocessed_data, room_readings, str(subjects_dir), subject, n_jobs, hasT1=hasT1)
 
 # Connectivity
 (con_mat_theta, con_mat_alpha, con_mat_beta, con_mat_gamma, labels) = calculate_connectivity(preprocessed_data, stcs, str(subjects_dir), subject, inverse_operator, con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv'], n_jobs=n_jobs)

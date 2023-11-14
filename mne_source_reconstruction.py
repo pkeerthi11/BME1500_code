@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import mne, os
 
-def mne_sourceReconstruction(preprocessed_epoched_data, preprocessed_room_readings, subjects_dir, subject, n_jobs, method="dSPM", hasT1=True):
+def mne_source_reconstruction(preprocessed_epoched_data, preprocessed_room_readings, subjects_dir, subject, n_jobs, method="dSPM", hasT1=True):
 
     # This function performs source reconstruction on preprocessed data using
     # MNE tools.
