@@ -29,12 +29,14 @@ def preprocess_data(raw_data_path, downsample_to, epoch_size_sec, subjects_dir, 
     # the selected sections are removed automatically. 
     
     # Create the plot folder if it doesn't exist
+    data_file_name = os.path.splitext(os.path.split(raw_data_path)[1])[0]
+    
     if subjects_dir != 'NA' or subject != 'NA':
-        plots_folder = os.path.join(subjects_dir,subject,'plots')
+        plots_folder = os.path.join(subjects_dir,subject,'plots_%s' % data_file_name)
         if not os.path.exists(plots_folder):
             os.system('mkdir %s' % plots_folder)  
         
-        preprocessed_plots = os.path.join(plots_folder, 'preprocessing')
+        preprocessed_plots = os.path.join(plots_folder, 'preprocessing_%s' % data_file_name)
         if not os.path.exists(preprocessed_plots):
             os.system('mkdir %s' % preprocessed_plots)  
     
@@ -127,7 +129,7 @@ def preprocess_data(raw_data_path, downsample_to, epoch_size_sec, subjects_dir, 
     # Close all plots so we don't overwhelm the memory in bulk runs.
     plt.close('all')
     
-    return preprocessed_data
+    return (preprocessed_data, data_file_name)
     
     
     

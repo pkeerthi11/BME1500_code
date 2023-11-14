@@ -1,12 +1,12 @@
 import mne, mne_connectivity, os
 import numpy as np
 
-def calculate_connectivity(preprocessed_data, stcs, subjects_dir, subject, inverse_operator, con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv'], n_jobs=-1):
+def calculate_connectivity(preprocessed_data, stcs, subjects_dir, subject, inverse_operator, data_file_name, con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv'], n_jobs=-1):
     
     # Get a connectivity results folder in subject dir
-    results_folder = os.path.join(subjects_dir, subject, 'connectivity_results')
+    results_folder = os.path.join(subjects_dir, subject, 'connectivity_results_%s' % data_file_name)
     if not os.path.exists(results_folder):
-        os.system('mkdir' % results_folder)
+        os.system('mkdir %s' % results_folder)
     
     # Get labels 
     labels = mne.read_labels_from_annot(subject, parc='aparc',

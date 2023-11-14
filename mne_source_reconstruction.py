@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import mne, os
 
-def mne_source_reconstruction(preprocessed_epoched_data, preprocessed_room_readings, subjects_dir, subject, n_jobs, method="dSPM", hasT1=True):
+def mne_source_reconstruction(preprocessed_epoched_data, preprocessed_room_readings, subjects_dir, subject, n_jobs, data_file_name, method="dSPM", hasT1=True):
 
     # This function performs source reconstruction on preprocessed data using
     # MNE tools.
@@ -16,6 +16,8 @@ def mne_source_reconstruction(preprocessed_epoched_data, preprocessed_room_readi
     # subjects_dir              : Freesurfer subjects dir
     # subject                   : Name of the subject in freesurfer subjects
     # n_jobs                    : Number of cores to use. -1 uses all cores.
+    # data_file_name            : Name of the MEG file being processed. Used to
+    #                             create folders to save output.
     # method                    : Method for source construction. dSPM is 
     #                             default. Other options are MNE, sLORETA, and
     #                             eLORETA.
@@ -35,13 +37,13 @@ def mne_source_reconstruction(preprocessed_epoched_data, preprocessed_room_readi
 ########################## Setup paths ########################################
 
     # Create a folder for diagnostic plots
-    plots_folder = os.path.join(subjects_dir,subject,'plots')
+    plots_folder = os.path.join(subjects_dir,subject,'plots_%s' % data_file_name)
     if not os.path.exists(plots_folder):
         os.system('mkdir %s' % plots_folder)    
 
     # Create a folder for intermediate files produced at each step in this 
     # script. We want this folder in the freesurfer path like the plots folder.
-    intermediate_folder = os.path.join(subjects_dir,subject,'sourceRecIntermediateFiles')
+    intermediate_folder = os.path.join(subjects_dir,subject,'sourceRecIntermediateFiles_%s' % data_file_name)
     if not os.path.exists(intermediate_folder):
         os.system('mkdir %s' % intermediate_folder)        
     
