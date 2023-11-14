@@ -53,7 +53,7 @@ con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv']
 
 # Preprocess the experiment data and empty room measurements
 (preprocessed_data, data_file_name) = preprocess_data(str(data), 120, 2, str(subjects_dir), subject, -1, True)
-(room_readings, _) = preprocess_data(str(data), 120, 0, 'NA', 'NA', -1, False)
+(room_readings, _) = preprocess_data(str(room_noise), 120, 0, 'NA', 'NA', -1, False)
 
 # Run source reconstruction
 (stcs, stcs_psd, inverse_operator) = mne_source_reconstruction(preprocessed_data, room_readings, str(subjects_dir), subject, n_jobs, data_file_name,  method=method, hasT1=hasT1, hasCoreg=hasCoreg)
