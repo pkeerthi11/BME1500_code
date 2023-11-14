@@ -50,8 +50,8 @@ def calculate_connectivity(preprocessed_data, stcs, subjects_dir, subject, inver
     # Save dictionaries to the results folder. Get these back with .items() 
     # method
     np.save(os.path.join(results_folder,'theta_connectivity.npy'), con_mat_theta)    
-    np.save(os.path.join(results_folder,'theta_connectivity.npy'), con_mat_alpha)    
-    np.save(os.path.join(results_folder,'theta_connectivity.npy'), con_mat_beta)    
-    np.save(os.path.join(results_folder,'theta_connectivity.npy'), con_mat_gamma)            
+    np.save(os.path.join(results_folder,'alpha_connectivity.npy'), con_mat_alpha)    
+    np.save(os.path.join(results_folder,'beta_connectivity.npy'), con_mat_beta)    
+    np.save(os.path.join(results_folder,'gamma_connectivity.npy'), con_mat_gamma)            
         
     return (con_mat_theta, con_mat_alpha, con_mat_beta, con_mat_gamma, labels)
