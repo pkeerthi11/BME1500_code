@@ -62,8 +62,7 @@ con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv']
 (con_mat_theta, con_mat_alpha, con_mat_beta, con_mat_gamma, labels) = calculate_connectivity(preprocessed_data, stcs, inverse_operator['src'], str(subjects_dir), subject, inverse_operator, data_file_name, con_methods=con_methods, n_jobs=n_jobs)
 
 # # Run this if you want to do connectivity analysis on fsaverage space 
-# MNE_data_path = mne.datasets.sample.data_path()
-# fsaverage_src = os.path.join(MNE_data_path, 'MEG', 'fsaverage', 'bem', 'fsaverage-vol-5-src.fif')
+# fsaverage_src = os.path.join(sample_data_folder, 'MEG', 'fsaverage', 'bem', 'fsaverage-vol-5-src.fif')
 # fsaverage_stcs = morph_to_fsaverage(stcs,fsaverage_src, hasT1, str(subjects_dir), subject)
 # (con_mat_theta, con_mat_alpha, con_mat_beta, con_mat_gamma, labels) = calculate_connectivity(preprocessed_data, fsaverage_stcs, fsaverage_src, subjects_dir, 'fsaverage', inverse_operator, data_file_name, con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv'], n_jobs=-1)
 
