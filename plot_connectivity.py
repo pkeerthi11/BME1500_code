@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import mne, mne_connectivity, os
 
-def plot_connectivity(con_mat, band_figure_save_name, labels,  con_methods, subjects_dir, subject, data_file_name, save_fig=True):    
+def plot_connectivity(con_mat, band_figure_save_name, labels,  con_methods, subjects_dir, subject, data_folder, save_fig=True):    
 
     # First, we reorder the labels based on their location in the left hemi
     label_names = [label.name for label in labels]
@@ -48,7 +48,7 @@ def plot_connectivity(con_mat, band_figure_save_name, labels,  con_methods, subj
         
         if save_fig == True:
             # Get a connectivity results folder in subject dir
-            results_folder = os.path.join(subjects_dir, subject, 'connectivity_results_%s' % data_file_name)
+            results_folder = os.path.join(data_folder, 'connectivity_results')
             if not os.path.exists(results_folder):
                 os.system('mkdir' % results_folder)
             fig.savefig(os.path.join(results_folder, 'results_%s_%s.png' % (band_figure_save_name, i)))

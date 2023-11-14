@@ -23,6 +23,10 @@ subjects_dir = (sample_data_folder / 'subjects')
 # If this is set False, copy fsaverage. This is to test the no-T1 MRI case.
 hasT1 = True 
 
+# Set this to the sourceRecIntermediateFiles saved in the freesurfer subject
+# folder if you already have the coregistration performed.
+hasCoreg = 'NA'
+
 # Get a copy of the sample data folder for this demo so we don't mess with MNE
 # sample data. If the sample_copy folder already exists from an earlier run, 
 # delete it first.
@@ -52,7 +56,7 @@ con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv']
 (room_readings, _) = preprocess_data(str(data), 250, 0, 'NA', 'NA', -1, False)
 
 # Run source reconstruction
-(stcs, stcs_psd, inverse_operator) = mne_source_reconstruction(preprocessed_data, room_readings, str(subjects_dir), subject, n_jobs, data_file_name,  method=method, hasT1=hasT1)
+(stcs, stcs_psd, inverse_operator) = mne_source_reconstruction(preprocessed_data, room_readings, str(subjects_dir), subject, n_jobs, data_file_name,  method=method, hasT1=hasT1, hasCoreg=hasCoreg)
 
 # Connectivity
 (con_mat_theta, con_mat_alpha, con_mat_beta, con_mat_gamma, labels) = calculate_connectivity(preprocessed_data, stcs, str(subjects_dir), subject, inverse_operator, data_file_name, con_methods=con_methods, n_jobs=n_jobs)
@@ -63,9 +67,9 @@ plot_connectivity(con_mat_alpha, 'alpha', labels, con_methods, str(subjects_dir)
 plot_connectivity(con_mat_beta, 'beta', labels, con_methods, str(subjects_dir), subject, data_file_name, save_fig=True)
 plot_connectivity(con_mat_gamma, 'gamma', labels, con_methods, str(subjects_dir), subject, data_file_name, save_fig=True)
 
-# # Morph to fsaverage space 
-# fsaverage_stcs = morph_to_fsaverage(stcs, hasT1, str(subjects_dir), subject)
-# fsaverage_stcs_psd = morph_to_fsaverage(stcs_psd, hasT1, str(subjects_dir), subject)
+# Morph to fsaverage space 
+fsaverage_stcs = morph_to_fsaverage(stcs, hasT1, str(subjects_dir), subject)
+fsaverage_stcs_psd = morph_to_fsaverage(stcs_psd, hasT1, str(subjects_dir), subject)
 
-# # Run label averaging on fsaverage space. We use the aparc label
-# (label_epochs, times, label_epochs_psd, frequencies) = average_sources_in_label(str(subjects_dir), 'fsaverage', fsaverage_stcs, fsaverage_stcs_psd)
+# Run label averaging on fsaverage space. We use the aparc label
+(label_epochs, times, label_epochs_psd, frequencies) = average_sources_in_label(str(subjects_dir), 'fsaverage', fsaverage_stcs, fsaverage_stcs_psd)
