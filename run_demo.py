@@ -2,7 +2,7 @@
 # pyvistaqt, finnpy. All can be installed with pip. 
 
 import os, mne
-from preprocessed_data import preprocessed_data
+from preprocess_data import preprocess_data
 from mne_sourceReconstruction import mne_sourceReconstruction
 from average_sources_in_label import average_sources_in_label
 from finnpy.source_reconstruction.mri_anatomy import copy_fs_avg_anatomy
@@ -45,8 +45,8 @@ n_jobs=4
 ######################### Run analysis functions ##############################
 
 # Preprocess the experiment data and empty room measurements
-preprocessed_data = preprocessed_data(str(data), 250, 3, str(subjects_dir), subject, -1, True)
-room_readings = preprocessed_data(str(data), 250, 0, 'NA', 'NA', -1, False)
+preprocessed_data = preprocess_data(str(data), 250, 3, str(subjects_dir), subject, -1, True)
+room_readings = preprocess_data(str(data), 250, 0, 'NA', 'NA', -1, False)
 
 # Run source reconstruction
 (stcs, stcs_psd, inverse_operator) = mne_sourceReconstruction(preprocessed_data, room_readings, str(subjects_dir), subject, n_jobs, hasT1=hasT1)
