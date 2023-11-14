@@ -52,7 +52,7 @@ con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv']
 ######################### Run analysis functions ##############################
 
 # Preprocess the experiment data and empty room measurements
-(preprocessed_data, data_file_name) = preprocess_data(str(data), 120, 3, str(subjects_dir), subject, -1, True)
+(preprocessed_data, data_file_name) = preprocess_data(str(data), 120, 2, str(subjects_dir), subject, -1, True)
 (room_readings, _) = preprocess_data(str(data), 120, 0, 'NA', 'NA', -1, False)
 
 # Run source reconstruction

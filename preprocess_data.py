@@ -56,13 +56,12 @@ def preprocess_data(raw_data_path, downsample_to, epoch_size_sec, subjects_dir, 
     raw_downsampled_for_plotting = raw_data.copy().resample(downsample_to)
     
     # Bandpass filter data and get rid of frequencies outside 1-250Hz.
-    bandpassed_data = raw_data.copy().filter(1, 250, 
+    bandpassed_data = raw_data.copy().filter(1, 100, 
                                              phase='zero-double')
 
     # Notch filtering for the band pass filtered data. This time we get rid of 
     # frequencies between 20 and 120Hz with 20Hz intervals. 
-    freqs_to_filter = np.arange(20,120,20)
-    notched_data = bandpassed_data.copy().notch_filter(freqs_to_filter,
+    notched_data = bandpassed_data.copy().notch_filter(60,
                                                        phase='zero-double')
     
     # Downsample the filtered data to specified frequency
