@@ -7,7 +7,7 @@ from autoreject import AutoReject, set_matplotlib_defaults
 mne.utils.check_random_state(42)
 set_matplotlib_defaults(plt)
 
-def preprocessData(raw_data_path, downsample_to, epoch_size_sec, subjects_dir, subject, n_jobs=-1, auto_reject=False):
+def preprocessed_data(raw_data_path, downsample_to, epoch_size_sec, subjects_dir, subject, n_jobs=-1, auto_reject=False):
     
     # This function performs preprocessing on raw MEG data. 
     #

@@ -1,7 +1,7 @@
 import mne 
 import numpy as np
 
-def averageSourcesInLabel(subjects_dir, subject, stcs, stcs_psd):
+def average_sources_in_label(subjects_dir, subject, stcs, stcs_psd):
     
     # This function averages sources in freesurfer labels.
     #
