@@ -40,7 +40,7 @@ def plot_connectivity(con_mat, band_figure_save_name, labels,  con_methods, subj
     for i in con_methods:
         fig, ax = plt.subplots(figsize=(8, 8), facecolor='black',
                                subplot_kw=dict(polar=True))
-        mne_connectivity.viz.plot_connectivity_circle(con_mat[i], label_names, n_lines=100,
+        mne_connectivity.viz.plot_connectivity_circle(con_mat[i], label_names, n_lines=20,
                                                       node_angles=node_angles, node_colors=label_colors,
                                                       title='All-to-All Connectivity [%s]' % i,
                                                       ax=ax, show=show)
@@ -50,6 +50,6 @@ def plot_connectivity(con_mat, band_figure_save_name, labels,  con_methods, subj
             # Get a connectivity results folder in subject dir
             results_folder = os.path.join(data_folder, 'connectivity_results')
             if not os.path.exists(results_folder):
-                os.system('mkdir' % results_folder)
+                os.system('mkdir %s' % results_folder)
             fig.savefig(os.path.join(results_folder, 'results_%s_%s.png' % (band_figure_save_name, i)))
         
