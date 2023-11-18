@@ -182,6 +182,10 @@ def mne_source_reconstruction(preprocessed_epoched_data, preprocessed_room_readi
         n_jobs=n_jobs,
         verbose=True,
     )
+    
+    # Convert fwd to surface based coordinate system
+    fwd = mne.convert_forward_solution(fwd, surf_ori=True)
+    
     print(fwd)
     mne.write_forward_solution(os.path.join(intermediate_folder, '%s-fwd.fif' % subject), fwd)
 
@@ -199,7 +203,7 @@ def mne_source_reconstruction(preprocessed_epoched_data, preprocessed_room_readi
     # Build inverse operator 
     inverse_operator = mne.minimum_norm.make_inverse_operator(preprocessed_epoched_data.info, 
                                                               fwd, noise_cov, 
-                                                              loose=0.2, depth=0.8)
+                                                              fixed=True)
     
     mne.minimum_norm.write_inverse_operator(os.path.join(intermediate_folder, '%s-inv.fif' % subject), inverse_operator)
 
