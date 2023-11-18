@@ -59,12 +59,12 @@ con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv']
 (stcs, stcs_psd, inverse_operator) = mne_source_reconstruction(preprocessed_data, room_readings, str(subjects_dir), subject, n_jobs, data_file_name,  method=method, hasT1=hasT1, hasCoreg=hasCoreg)
 
 # Connectivity
-(con_mat_theta, con_mat_alpha, con_mat_beta, con_mat_gamma, labels) = calculate_connectivity(preprocessed_data, stcs, inverse_operator['src'], str(subjects_dir), subject, inverse_operator, data_file_name, con_methods=con_methods, n_jobs=n_jobs)
+(con_mat_theta, con_mat_alpha, con_mat_beta, con_mat_gamma, labels) = calculate_connectivity(preprocessed_data, stcs, inverse_operator['src'], str(subjects_dir), subject, data_file_name, con_methods=con_methods, n_jobs=n_jobs)
 
 # # Run this if you want to do connectivity analysis on fsaverage space 
 # fsaverage_src = os.path.join(sample_data_folder, 'subjects', 'fsaverage', 'bem', 'fsaverage-ico-5-src.fif')
 # fsaverage_stcs = morph_to_fsaverage(stcs,fsaverage_src, hasT1, str(subjects_dir), subject)
-# (con_mat_theta, con_mat_alpha, con_mat_beta, con_mat_gamma, labels) = calculate_connectivity(preprocessed_data, fsaverage_stcs, fsaverage_src, subjects_dir, 'fsaverage', inverse_operator, data_file_name, con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv'], n_jobs=-1)
+# (con_mat_theta, con_mat_alpha, con_mat_beta, con_mat_gamma, labels) = calculate_connectivity(preprocessed_data, fsaverage_stcs, fsaverage_src, subjects_dir, 'fsaverage', data_file_name, con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv'], n_jobs=-1)
 
 # Plot connectivity
 plot_connectivity(con_mat_theta, 'theta', labels, con_methods, str(subjects_dir), subject, data_file_name, save_fig=True)
