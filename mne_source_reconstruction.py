@@ -192,7 +192,7 @@ def mne_source_reconstruction(preprocessed_epoched_data, preprocessed_room_readi
 
 ############################ Noise Covariance #################################
 
-    noise_cov = mne.compute_raw_covariance(preprocessed_room_readings, method=["shrunk", "empirical"], rank=None, verbose=True)
+    noise_cov = mne.compute_raw_covariance(preprocessed_room_readings, method='empirical', rank=None, verbose=True)
     fig_cov, fig_spectra = mne.viz.plot_cov(noise_cov, preprocessed_epoched_data.info, show=False)
     fig_cov.savefig(os.path.join(plots_folder, 'noise_cov.png'))
     fig_spectra.savefig(os.path.join(plots_folder, 'noise_spec.png'))
