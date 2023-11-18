@@ -225,4 +225,4 @@ def mne_source_reconstruction(preprocessed_epoched_data, preprocessed_room_readi
                                                           n_jobs=n_jobs, fmin=fmin, fmax=fmax,
                                                           bandwidth=bandwidth, verbose=True)
 
-    return (stcs, stcs_psd, inverse_operator)
+    return (stcs, stcs_psd, inverse_operator, intermediate_folder)
