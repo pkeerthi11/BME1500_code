@@ -59,7 +59,7 @@ subjects_dir = '/home/bme1500trd/freesurfer/subjects'
 empty_room = '/home/bme1500trd/workspace/empty_room/selected/rec.fif'
 n_jobs=-1
 method = 'dSPM' # Source method
-con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv'] # Connectivity metrics
+con_methods = ['coh', 'cohy', 'imcoh', 'plv', 'ciplv', 'ppc', 'pli', 'dpli', 'wpli', 'wpli2_debiased']
 sample_data_folder = mne.datasets.sample.data_path()
 fsaverage_src = os.path.join(str(sample_data_folder), 'subjects', 'fsaverage', 'bem', 'fsaverage-ico-5-src.fif')
 
@@ -89,9 +89,12 @@ for i in range(len(subjects)):
                                                                                         subject, n_jobs, data_file_name,  method=method, 
                                                                                         hasT1=True, hasCoreg=hasCoreg)
 
-    # Run this if you want to do connectivity analysis on fsaverage space 
-    fsaverage_stcs = morph_to_fsaverage(stcs,fsaverage_src, True, str(subjects_dir), subject)
-    (con_mat_theta, con_mat_alpha, con_mat_beta, con_mat_gamma, labels) = calculate_connectivity(preprocessed_data, fsaverage_stcs, fsaverage_src, subjects_dir, 'fsaverage', data_file_name, con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv'], n_jobs=-1)
+    # # Run this if you want to do connectivity analysis on fsaverage space 
+    # fsaverage_stcs = morph_to_fsaverage(stcs,fsaverage_src, True, str(subjects_dir), subject)
+    # (con_mat_theta, con_mat_alpha, con_mat_beta, con_mat_gamma, labels) = calculate_connectivity(preprocessed_data, fsaverage_stcs, fsaverage_src, subjects_dir, 'fsaverage', data_file_name, con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv'], n_jobs=-1)
+ 
+    # Coonnectivity in the subject spave
+    (con_mat_theta, con_mat_alpha, con_mat_beta, con_mat_gamma, labels) = calculate_connectivity(preprocessed_data, stcs, inverse_operator['src'], subjects_dir, subject, data_file_name, con_methods=con_methods, n_jobs=-1)
 
     # Plot connectivity
     plot_connectivity(con_mat_theta, 'theta', labels, con_methods, subjects_dir, subject, data_file_name, save_fig=True)
@@ -113,9 +116,13 @@ for i in range(len(subjects)):
                                                                                         subject, n_jobs, data_file_name,  method=method, 
                                                                                         hasT1=True, hasCoreg=hasCoreg)
 
-    # Run this if you want to do connectivity analysis on fsaverage space 
-    fsaverage_stcs = morph_to_fsaverage(stcs,fsaverage_src, True, str(subjects_dir), subject)
-    (con_mat_theta, con_mat_alpha, con_mat_beta, con_mat_gamma, labels) = calculate_connectivity(preprocessed_data, fsaverage_stcs, fsaverage_src, subjects_dir, 'fsaverage', data_file_name, con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv'], n_jobs=-1)
+    # # Run this if you want to do connectivity analysis on fsaverage space 
+    # fsaverage_stcs = morph_to_fsaverage(stcs,fsaverage_src, True, str(subjects_dir), subject)
+    # (con_mat_theta, con_mat_alpha, con_mat_beta, con_mat_gamma, labels) = calculate_connectivity(preprocessed_data, fsaverage_stcs, fsaverage_src, subjects_dir, 'fsaverage', data_file_name, con_methods=['coh', 'pli', 'wpli2_debiased', 'ciplv'], n_jobs=-1)
+
+    # Connectivity in the subject space
+    (con_mat_theta, con_mat_alpha, con_mat_beta, con_mat_gamma, labels) = calculate_connectivity(preprocessed_data, stcs, inverse_operator['src'], subjects_dir, subject, data_file_name, con_methods=con_methods, n_jobs=-1)
+
 
     # Plot connectivity
     plot_connectivity(con_mat_theta, 'theta', labels, con_methods, subjects_dir, subject, data_file_name, save_fig=True)
